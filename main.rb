@@ -29,15 +29,19 @@ class PythonLibraryPopulator
       "properties" : {
         "name" : {
           "type" : "string",
-          "index" : "not_analyzed"
+          "index" : "not_analyzed",
+          "search_analyzer" : "simple"
         },
         "kind" : {
+          "type" : "string",
           "index" : "no"
         },
         "params" : {
+          "type" : "string",
           "index" : "no"
         },
         "path" : {
+          "type" : "string",
           "index" : "no"
         }
       }
