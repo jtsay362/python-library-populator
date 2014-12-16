@@ -43,6 +43,10 @@ class PythonLibraryPopulator
         "path" : {
           "type" : "string",
           "index" : "no"
+        },
+        "summaryHtml" : {
+          "type" : "string",
+          "index" : "no"
         }
       }
     }
@@ -85,20 +89,18 @@ class PythonLibraryPopulator
 
         simple_name = dt.css('tt.descname')[0].text()
 
-
         params = dt.css('em').collect do |em|
           em.text().strip()
         end
 
-
-        summary = dl.css('dd').text()
+        summary_html = dl.css('dd').inner_html()
         relative_path = simple_filename + (dl.css('a.headerlink')[0].attr('href') rescue '')
 
         puts "Full name = '#{full_name}'"
         debug "Class name = '#{class_name}'"
         puts "Parameters = (#{params.join(',')})"
         debug "Simple name = '#{simple_name}'"
-        debug "Summary = '#{summary}'"
+        debug "Summary HTML = '#{summary_html}'"
         debug "Path = '#{relative_path}'"
 
         output_doc = {
@@ -107,7 +109,7 @@ class PythonLibraryPopulator
             params: params,
             kind: kind,
             path: relative_path,
-            summary: summary
+            summaryHtml: summary_html
         }
 
         if @first_document
