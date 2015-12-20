@@ -236,14 +236,19 @@ class PythonLibraryPopulator
 
     dt = dl.css('dt')[0]
 
-    simple_name = dt.css('tt.descname')[0].text()
+    begin
+      simple_name = dt.css('code.descname')[0].text()
+    rescue => e
+      puts "Can't read simple_name for filename #{simple_filename}, module = #{module_name}, class = #{class_name}, dl = #{dl.text}"
+      return
+    end
 
     #debug "Found element #{dt.to_s}"
 
     full_name = nil
 
     if kind == 'class'
-      full_name = (dt.css('tt.descclassname')[0].text() rescue '') + simple_name
+      full_name = (dt.css('.descclassname')[0].text() rescue '') + simple_name
     else
       full_name = dt.attr('id')
     end
