@@ -152,7 +152,7 @@ class PythonLibraryPopulator
 
     if module_name_holder
       module_name = module_name_holder.text()
-      module_summary = doc.css('h1 a.reference').first.attr('title')
+      module_summary = doc.css('h1 a.reference').first.attr('title').strip
     else
       puts "No module name found for file '#{simple_filename}'"
 
@@ -250,7 +250,7 @@ class PythonLibraryPopulator
     module_doc = {
       name: module_name,
       simpleName: module_name,
-      summaryHtml: CGI::escapeHTML(module_summary),
+      summaryHtml: module_summary,
       kind: 'module',
       path: simple_filename,
       sourceCodeUrl: source_code_url,
@@ -292,7 +292,7 @@ class PythonLibraryPopulator
       full_name = dt.attr('id')
     end
 
-    summary_html = dl.css('dd').inner_html()
+    summary_html = dl.css('dd').inner_html().strip
     relative_path = simple_filename + (dl.css('a.headerlink')[0].attr('href') rescue '')
 
     debug "Full name = '#{full_name}'"
