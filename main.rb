@@ -262,7 +262,7 @@ class PythonLibraryPopulator
     dt = dl.css('dt')[0]
 
     begin
-      simple_name = dt.css('code.descname')[0].text()
+      simple_name = dt.css('.descname')[0].text()
     rescue => e
       puts "Can't read simple_name for filename #{simple_filename}, module = #{module_name}, class = #{class_name}, dl = #{dl.text}"
       return
