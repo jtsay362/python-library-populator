@@ -23,6 +23,24 @@ class PythonLibraryPopulator
       out.write <<-eos
 {
   "metadata" : {
+    "settings" : {
+      "analysis": {
+        "char_filter" : {
+          "no_special" : {
+            "type" : "mapping",
+            "mappings" : [".=>", "*=>", "(=>", ")=>", "_=>"]
+          }
+        },
+        "analyzer" : {
+          "lower_keyword" : {
+            "type" : "custom",
+            "tokenizer": "keyword",
+            "filter" : ["lowercase"],
+            "char_filter" : ["no_special"]
+          }
+        }
+      }
+    },
     "mapping" : {
       "_all" : {
         "enabled" : false
@@ -30,21 +48,19 @@ class PythonLibraryPopulator
       "properties" : {
         "name" : {
           "type" : "string",
-          "index" : "analyzed",
-          "analyzer" : "simple"
+          "analyzer" : "lower_keyword"
         },
         "simpleName" : {
           "type" : "string",
-          "index" : "analyzed",
-          "analyzer" : "simple"
+          "analyzer" : "lower_keyword"
         },
         "enclosingModule" : {
           "type" : "string",
-          "index" : "analyzed"
+          "analyzer" : "lower_keyword"
         },
         "enclosingClass" : {
           "type" : "string",
-          "index" : "analyzed"
+          "analyzer" : "lower_keyword"
         },
         "kind" : {
           "type" : "string",
@@ -68,23 +84,27 @@ class PythonLibraryPopulator
         },
         "functions" : {
           "type" : "object",
-          "index" : "no"
+          "enabled" : false
         },
         "classes" : {
           "type" : "object",
-          "index" : "no"
+          "enabled" : false
         },
         "constants" : {
           "type" : "object",
-          "index" : "no"
+          "enabled" : false
         },
         "methods" : {
           "type" : "object",
-          "index" : "no"
+          "enabled" : false
         },
         "classMethods" : {
           "type" : "object",
-          "index" : "no"
+          "enabled" : false
+        },
+        "suggest" : {
+          "type" : "completion",
+          "analyzer" : "lower_keyword"
         }
       }
     }
@@ -93,6 +113,7 @@ class PythonLibraryPopulator
       eos
 
       Dir["#{@dir_path}/library/*.html"].each do |file_path|
+      #Dir["#{@dir_path}/library/mmap.html"].each do |file_path|
 
         simple_filename = File.basename(file_path)
 
@@ -221,7 +242,11 @@ class PythonLibraryPopulator
       sourceCodeUrl: source_code_url,
       functions: summarize_members(module_functions),
       classes: summarize_members(module_classes),
-      constants: summarize_members(module_constants)
+      constants: summarize_members(module_constants),
+      suggest: {
+        input: module_name,
+        output: module_name
+      }
     }
 
     write_doc(out, module_doc)
@@ -270,7 +295,11 @@ class PythonLibraryPopulator
       kind: kind,
       path: relative_path,
       summaryHtml: summary_html,
-      sourceCodeUrl: source_code_url
+      sourceCodeUrl: source_code_url,
+      suggest: {
+        input: [full_name, simple_name].uniq.compact,
+        output: full_name
+      }
     }
 
     if (kind != 'attribute') && (kind != 'constant')
