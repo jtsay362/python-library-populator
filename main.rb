@@ -117,6 +117,10 @@ class PythonLibraryPopulator
 
         simple_filename = File.basename(file_path)
 
+        #unless simple_filename.end_with?('stdtypes.html')
+        #  next
+        #end
+
         puts "Opening file '#{file_path}' ..."
 
         File.open(file_path) do |f|
@@ -142,13 +146,23 @@ class PythonLibraryPopulator
   end
 
   def process_file(doc, simple_filename, out)
+    module_name = nil
+    module_summary = nil
     module_name_holder = doc.css('h1 a.reference .py-mod .pre').first
 
-    unless module_name_holder
-      return
+    if module_name_holder
+      module_name = module_name_holder.text()
+      module_summary = doc.css('h1 a.reference').first.attr('title')
+    else
+      puts "No module name found for file '#{simple_filename}'"
+
+      simple_filebase = simple_filename.gsub(/\.html$/, '')
+
+      module_name = simple_filebase.split('/').last
+      module_summary = doc.css('h1').text().gsub(/^\s*\d*\.\s*/, '').gsub('¶', '').strip
     end
 
-    module_name = module_name_holder.text()
+
     source_code_label = doc.css('strong').find do |node|
       node.text().strip == 'Source code:'
     end
@@ -158,7 +172,7 @@ class PythonLibraryPopulator
       source_code_url = source_code_label.next_element().attr('href')
     end
 
-    module_summary = doc.css('h1 a.reference').first.attr('title')
+
     module_functions = []
     module_classes = []
     module_constants = []
