@@ -28,7 +28,7 @@ class PythonLibraryPopulator
         "char_filter" : {
           "no_special" : {
             "type" : "mapping",
-            "mappings" : [".=>", "*=>", "(=>", ")=>", "_=>"]
+            "mappings" : [".=>", "*=>", "(=>", ")=>", "_=>", "#=>", "\\\\u0020=>"]
           }
         },
         "analyzer" : {
