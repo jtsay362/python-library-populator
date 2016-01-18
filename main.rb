@@ -138,7 +138,7 @@ class PythonLibraryPopulator
   def summarize_members(members)
     members.map do |member|
       summarized = member.dup
-      [:name, :enclosingModule, :enclosingClass, :kind, :sourceCodeUrl, :methods, :classMethods, :attributes].each do |key|
+      [:name, :enclosingModule, :enclosingClass, :kind, :sourceCodeUrl, :methods, :classMethods, :attributes, :suggest].each do |key|
         summarized.delete(key)
       end
       summarized
